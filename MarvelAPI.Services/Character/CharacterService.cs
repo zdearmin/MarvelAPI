@@ -42,39 +42,41 @@ namespace MarvelAPI.Services.Character
                         Id = c.Id,
                         FullName = c.FullName
                 })
+                .OrderBy(n => n.FullName)
                 .ToListAsync();
             return result;
         }
 
         public async Task<IEnumerable<CharacterAbilities>> GetCharactersByAbilityAsync(string ability) {
             var result = await _dbContext.Characters
+                .Where(
+                    o => o.Abilities != null && 
+                    o.Abilities.ToLower().Contains(ability.ToLower())
+                )
                 .Select(
                     c => new CharacterAbilities{
                         Id = c.Id,
                         FullName = c.FullName,
                         Abilities = c.Abilities
                 })
-                .Where(
-                    o => o.Abilities != null && 
-                    o.Abilities.ToLower().Contains(ability.ToLower())
-                )
+                .OrderBy(n => n.FullName)
                 .ToListAsync();
             return result;
         }
 
         public async Task<IEnumerable<CharacterAliases>> GetCharactersByAliasesAsync(string aliases) {
             var result = await _dbContext.Characters
+                .Where(
+                    o => o.Aliases != null && 
+                    o.Aliases.ToLower().Contains(aliases.ToLower())
+                )
                 .Select(
                     c => new CharacterAliases{
                         Id = c.Id,
                         FullName = c.FullName,
                         Aliases = c.Aliases
-                    }
-                )
-                .Where(
-                    o => o.Aliases != null && 
-                    o.Aliases.ToLower().Contains(aliases.ToLower())
-                )
+                })
+                .OrderBy(n => n.FullName)
                 .ToListAsync();
             return result;
         }
@@ -126,21 +128,23 @@ namespace MarvelAPI.Services.Character
         public async Task<bool> UpdateCharacterAsync(int characterId, CharacterUpdate request)
         {
             var characterFound = await _dbContext.Characters.FindAsync(characterId);
-            if (characterFound is null) {
-                return false;
+            
+            if (characterFound != null)
+            {
+                characterFound.FullName = CheckUpdateProperty(characterFound.FullName, request.FullName);
+                characterFound.Age = CheckUpdateProperty(characterFound.Age, request.Age);
+                characterFound.Location = CheckUpdateProperty(characterFound.Location, request.Location);
+                characterFound.Origin = CheckUpdateProperty(characterFound.Origin, request.Origin);
+                characterFound.Abilities = CheckUpdateProperty(characterFound.Abilities, request.Abilities);
+                characterFound.AbilitiesOrigin = CheckUpdateProperty(characterFound.AbilitiesOrigin, request.AbilitiesOrigin);
+                characterFound.Aliases = CheckUpdateProperty(characterFound.Aliases, request.Aliases);
+                characterFound.Status = CheckUpdateProperty(characterFound.Status, request.Status);
+                var numOfChanges = await _dbContext.SaveChangesAsync();
+                return numOfChanges == 1;
             }
-            characterFound.FullName = CheckUpdateProperty(characterFound.FullName, request.FullName);
-            characterFound.Age = CheckUpdateProperty(characterFound.Age, request.Age);
-            characterFound.Location = CheckUpdateProperty(characterFound.Location, request.Location);
-            characterFound.Origin = CheckUpdateProperty(characterFound.Origin, request.Origin);
-            characterFound.Abilities = CheckUpdateProperty(characterFound.Abilities, request.Abilities);
-            characterFound.AbilitiesOrigin = CheckUpdateProperty(characterFound.AbilitiesOrigin, request.AbilitiesOrigin);
-            characterFound.Aliases = CheckUpdateProperty(characterFound.Aliases, request.Aliases);
-            characterFound.Status = CheckUpdateProperty(characterFound.Status, request.Status);
-            var numOfChanges = await _dbContext.SaveChangesAsync();
-            return numOfChanges == 1;
+            return false;
         }
-        
+
         public async Task<bool> DeleteCharacterAsync(int id)
         {
             var character = await _dbContext.Characters.FindAsync(id);

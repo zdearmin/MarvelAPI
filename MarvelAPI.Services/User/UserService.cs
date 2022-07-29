@@ -15,12 +15,12 @@ namespace MarvelAPI.Services.User
         public UserService(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext)
         {
             var userClaims = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-            var value = userClaims.FindFirst("Id")?.Value;
-            var validId = int.TryParse(value, out _userId);
-            if (!validId)
-            {
-                throw new Exception("Attempted to build UserService without User Id claim.");
-            }
+            // var value = userClaims.FindFirst("Id")?.Value;
+            // var validId = int.TryParse(value, out _userId);
+            // if (!validId)
+            // {
+            //     throw new Exception("Attempted to build UserService without User Id claim.");
+            // }
 
             _dbContext = dbContext;
         }

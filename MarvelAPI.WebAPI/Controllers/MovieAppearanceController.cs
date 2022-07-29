@@ -15,7 +15,7 @@ namespace MarvelAPI.WebAPI.Controllers
             _service = service;
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,7 +53,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return Ok(movieAppearance);
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPut("{movieAppearanceId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,7 +70,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return BadRequest("Sorry, the movie appearnce could not be updated.");
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpDelete("{movieAppearanceId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

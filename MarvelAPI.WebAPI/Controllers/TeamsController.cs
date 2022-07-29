@@ -15,7 +15,7 @@ namespace MarvelAPI.WebAPI.Controllers
             _service = teamsService;
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,7 +49,7 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
 
-        [Authorize]
+        // [Authorize]
         [HttpPut("{teamId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -64,7 +64,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return BadRequest("Could not update Team.");
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpDelete("{teamId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

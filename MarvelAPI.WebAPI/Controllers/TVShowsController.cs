@@ -16,7 +16,7 @@ namespace MarvelAPI.WebAPI.Controllers
             _service = service;
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +66,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return Ok(tvShow);
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPut("{tvShowId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -83,7 +83,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return BadRequest("Sorry, the TV show could not be updated.");
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpDelete("{tvShowId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

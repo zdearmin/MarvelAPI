@@ -15,7 +15,7 @@ namespace MarvelAPI.WebAPI.Controllers
             _service = service;
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -52,7 +52,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return Ok(teamMembership);
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpPut("{teamMembershipId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -69,7 +69,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return BadRequest("Sorry,the Team Membership could not be updated.");
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpDelete("{teamMembershipId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
