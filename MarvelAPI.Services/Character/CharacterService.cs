@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using MarvelAPI.Data;
 using MarvelAPI.Data.Entities;
 using MarvelAPI.Models.Characters;
@@ -80,45 +81,46 @@ namespace MarvelAPI.Services.Character
 
         public async Task<CharacterDetail> GetCharacterByIdAsync(int id)
         {
-            var characterFound = await _dbContext.Characters.FindAsync(id);
-            
-            var characterMovies = characterFound.Movies.Select(
-                m => new MovieListItem{
-                    Id = m.Id,
-                    Title = m.Movie.Title
-                }
-            );
+            var characterFound = await _dbContext.Characters
+            .Include(x => x.Movies)
+            .ThenInclude(y => y.Movie)
+            .Include(x => x.TVShows)
+            .ThenInclude(y => y.TVShow)
+            .Include(x => x.Teams)
+            .ThenInclude(y => y.Team)
+            .FirstOrDefaultAsync(c => c.Id == id);
 
-            var characterTVShows = characterFound.TVShows.Select(
-                t => new TVShowListItem{
-                    Id = t.Id,
-                    Title = t.TVShow.Title
-                }
-            );
-            
-            var characterTeams = characterFound.Teams.Select(
-                tm => new TeamListItem{
-                    Id = tm.Id,
-                    Name = tm.Team.Name
-                }
-            );
-
-            var result = new CharacterDetail{
-                Id = characterFound.Id,
-                FullName = characterFound.FullName,
-                Age = characterFound.Age,
-                Location = characterFound.Location,
-                Origin = characterFound.Origin,
-                Abilities = characterFound.Abilities,
-                AbilitiesOrigin = characterFound.AbilitiesOrigin,
-                Aliases = characterFound.Aliases,
-                Status = characterFound.Status,
-                Movies = characterMovies.ToList(),
-                TVShows = characterTVShows.ToList(),
-                Teams = characterTeams.ToList()
-            };
-
-            return result;
+            if (characterFound != null)
+            {
+                return new CharacterDetail
+                {
+                    Id = characterFound.Id,
+                    FullName = characterFound.FullName,
+                    Age = characterFound.Age,
+                    Location = characterFound.Location,
+                    Origin = characterFound.Origin,
+                    Abilities = characterFound.Abilities,
+                    AbilitiesOrigin = characterFound.AbilitiesOrigin,
+                    Aliases = characterFound.Aliases,
+                    Status = characterFound.Status,
+                    Movies = characterFound.Movies.Select(m => new MovieListItem
+                    {
+                        Id = m.Id,
+                        Title = m.Movie.Title
+                    }).ToList(),
+                    TVShows = characterFound.TVShows.Select(tv => new TVShowListItem
+                    {
+                        Id = tv.Id,
+                        Title = tv.TVShow.Title
+                    }).ToList(),
+                    Teams = characterFound.Teams.Select(tm => new TeamListItem
+                    {
+                        Id = tm.Id,
+                        Name = tm.Team.Name
+                    }).ToList(),
+                };
+            }
+                return null;
         }
 
         public async Task<bool> UpdateCharacterAsync(int characterId, CharacterUpdate request)
