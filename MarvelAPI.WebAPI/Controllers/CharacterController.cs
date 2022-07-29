@@ -32,7 +32,7 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(CharacterListItem), 200)]
+        [ProducesResponseType(typeof(IEnumerable<CharacterListItem>), 200)]
         public async Task<IActionResult> GetAllCharactersAsync() {
             return Ok(await _service.GetAllCharactersAsync());
         }
@@ -49,7 +49,7 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
         [HttpGet("Abilities/{ability}")]
-        [ProducesResponseType(typeof(CharacterAbilities), 200)]
+        [ProducesResponseType(typeof(IEnumerable<CharacterAbilities>), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCharactersByAbilityAsync([FromRoute] string ability) {
             var result = await _service.GetCharactersByAbilityAsync(ability);
@@ -60,10 +60,21 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
         [HttpGet("Aliases/{aliases}")]
-        [ProducesResponseType(typeof(CharacterAliases), 200)]
+        [ProducesResponseType(typeof(IEnumerable<CharacterAliases>), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCharactersByAliasesAsync([FromRoute] string aliases) {
             var result = await _service.GetCharactersByAliasesAsync(aliases);
+            if (result == default) {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("{name}")]
+        [ProducesResponseType(typeof(IEnumerable<CharacterListItem>), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCharactersByNameAsync([FromRoute] string name) {
+            var result = await _service.GetCharactersByNameAsync(name);
             if (result == default) {
                 return NotFound();
             }

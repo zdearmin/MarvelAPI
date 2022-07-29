@@ -54,11 +54,11 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
         [HttpGet("{movieTitle}")]
-        [ProducesResponseType(typeof(MovieDetail), 200)]
+        [ProducesResponseType(typeof(IEnumerable<MovieListItem>), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetMovieByTitleAsync([FromRoute] string movieTitle)
+        public async Task<IActionResult> GetMoviesByTitleAsync([FromRoute] string movieTitle)
         {
-            var movie = await _service.GetMovieByTitleAsync(movieTitle);
+            var movie = await _service.GetMoviesByTitleAsync(movieTitle);
             if (movie == default)
             {
                 return NotFound("Sorry, the movie could not be found.");

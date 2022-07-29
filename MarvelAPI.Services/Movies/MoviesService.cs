@@ -23,6 +23,7 @@ namespace MarvelAPI.Services.MoviesService
                 Title = model.Title,
                 ReleaseYear = model.ReleaseYear
             };
+
             foreach (var m in await _dbContext.Movies.ToListAsync())
             {
                 if (ReformatTitle(m) == ReformatTitle(movie)) 
@@ -30,6 +31,7 @@ namespace MarvelAPI.Services.MoviesService
                     return false;
                 }
             }
+
             _dbContext.Movies.Add(movie);
             var numberOfChanges = await _dbContext.SaveChangesAsync();
             return numberOfChanges == 1;
@@ -37,112 +39,76 @@ namespace MarvelAPI.Services.MoviesService
 
         public async Task<IEnumerable<MovieListItem>> GetAllMoviesAsync()
         {
-            var movieList = await _dbContext.Movies.Select(m => new MovieListItem
+            var movieList = await _dbContext.Movies
+            .Select(
+                m => new MovieListItem
             {
                 Id = m.Id,
                 Title = m.Title
-            }).ToListAsync();
+            })
+            .OrderBy(t => t.Title)
+            .ToListAsync();
             return movieList;
         }
 
         public async Task<MovieDetail> GetMovieByIdAsync(int movieId)
         {
-            var movieFound = await _dbContext.Movies.FindAsync(movieId);
+            var movieFound = await _dbContext.Movies
+            .Include(x => x.Characters)
+            .ThenInclude(y => y.Character)
+            .FirstOrDefaultAsync(m => m.Id == movieId);
 
-            var movieCharacters = await _dbContext.MovieAppearances
-            .Select(
-                ma => new MovieAppearanceDetail
-                {
-                    Id = ma.Id,
-                    CharacterId = ma.Character.Id,
-                    Character = ma.Character.FullName,
-                    MovieId = ma.Movie.Id,
-                    Movie = ma.Movie.Title
-                }
-            )
-            .Where(
-                m => m.Movie == movieFound.Title
-            )
-            .Select(
-                cli => new CharacterListItem
-                {
-                    Id = cli.CharacterId,
-                    FullName = cli.Character
-                }
-            )
-            .ToListAsync();
-
-            var result = new MovieDetail
+            if (movieFound != null)
             {
-                Id = movieFound.Id,
-                Title = movieFound.Title,
-                ReleaseYear = (int)movieFound.ReleaseYear,
-                Characters = movieCharacters
-            };
-            return result;
+                return new MovieDetail
+                {
+                    Id = movieFound.Id,
+                    Title = movieFound.Title,
+                    ReleaseYear = (int)movieFound.ReleaseYear,
+                    Characters = movieFound.Characters.Select(c => new CharacterListItem
+                    {
+                        Id = c.Id,
+                        FullName = c.Character.FullName
+                    })
+                    .OrderBy(n => n.FullName)
+                    .ToList()
+                };
+            }
+            return null;
         }
 
-        public async Task<MovieDetail> GetMovieByTitleAsync(string movieTitle)
+        public async Task<IEnumerable<MovieListItem>> GetMoviesByTitleAsync(string movieTitle)
         {
-            var movieFound = await _dbContext.Movies
-            .Select(
-                mf => new MovieDetail
-                {
-                    Id = mf.Id,
-                    Title = mf.Title,
-                    // added ReleaseYear because otherwise would return 0
-                    ReleaseYear = (int)mf.ReleaseYear
-                }
-            )
+            var moviesFound = await _dbContext.Movies
             .Where(
-                m => m.Title == movieTitle
-            )
-            .FirstOrDefaultAsync();
-
-            var movieCharacters = await _dbContext.MovieAppearances
-            .Select(
-                ma => new MovieAppearanceDetail
-                {
-                    Id = ma.Id,
-                    CharacterId = ma.Character.Id,
-                    Character = ma.Character.FullName,
-                    MovieId = ma.Movie.Id,
-                    Movie = ma.Movie.Title
-                }
-            )
-            .Where(
-                m => m.Movie == movieFound.Title
+                t => t.Title != null &&
+                t.Title.ToLower().Contains(movieTitle.ToLower())
             )
             .Select(
-                cli => new CharacterListItem
+                m => new MovieListItem
                 {
-                    Id = cli.CharacterId,
-                    FullName = cli.Character
-                }
-            )
+                    Id = m.Id,
+                    Title = m.Title
+                })
+            .OrderBy(t => t.Title)
             .ToListAsync();
-
-            var result = new MovieDetail
-            {
-                Id = movieFound.Id,
-                Title = movieFound.Title,
-                ReleaseYear = (int)movieFound.ReleaseYear,
-                Characters = movieCharacters
-            };
-            return result;
+            return moviesFound;
         }
 
         public async Task<bool> UpdateMoviesAsync(int movieId, MovieUpdate request)
         {
             var movieFound = await _dbContext.Movies.FindAsync(movieId);
+
             if (movieFound is null)
             {
                 return false;
             }
+
             var movieUpdate = new MoviesEntity
             {
                 Title = request.Title
             };
+
             foreach (var m in await _dbContext.Movies.ToListAsync())
             {
                 if (ReformatTitle(m) == ReformatTitle(movieUpdate))
@@ -150,6 +116,7 @@ namespace MarvelAPI.Services.MoviesService
                     return false;
                 }
             }
+
             movieFound.Title = request.Title;
             movieFound.ReleaseYear = request.ReleaseYear;
             var numberOfChanges = await _dbContext.SaveChangesAsync();

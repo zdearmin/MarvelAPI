@@ -8,7 +8,7 @@ namespace MarvelAPI.Services.MoviesService
         Task<bool> CreateMoviesAsync(MovieCreate model);
         Task<IEnumerable<MovieListItem>> GetAllMoviesAsync();
         Task<MovieDetail> GetMovieByIdAsync(int movieId);
-        Task<MovieDetail> GetMovieByTitleAsync(string movieTitle);
+        Task<IEnumerable<MovieListItem>> GetMoviesByTitleAsync(string movieTitle);
         Task<bool> UpdateMoviesAsync(int movieId, MovieUpdate request);
         Task<bool> DeleteMoviesAsync(int movieId);
     }

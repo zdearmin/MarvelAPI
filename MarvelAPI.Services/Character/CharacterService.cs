@@ -81,6 +81,23 @@ namespace MarvelAPI.Services.Character
             return result;
         }
 
+        public async Task<IEnumerable<CharacterListItem>> GetCharactersByNameAsync(string name) {
+            var result = await _dbContext.Characters
+                .Where(
+                    o => o.FullName != null && 
+                    o.FullName.ToLower().Contains(name.ToLower())
+                )
+                .Select(
+                    c => new CharacterListItem{
+                        Id = c.Id,
+                        FullName = c.FullName
+                })
+                .OrderBy(n => n.FullName)
+                .ToListAsync();
+            return result;
+        }
+
+
         public async Task<CharacterDetail> GetCharacterByIdAsync(int id)
         {
             var characterFound = await _dbContext.Characters
@@ -109,20 +126,26 @@ namespace MarvelAPI.Services.Character
                     {
                         Id = m.Id,
                         Title = m.Movie.Title
-                    }).ToList(),
+                    })
+                    .OrderBy(t => t.Title)
+                    .ToList(),
                     TVShows = characterFound.TVShows.Select(tv => new TVShowListItem
                     {
                         Id = tv.Id,
                         Title = tv.TVShow.Title
-                    }).ToList(),
+                    })
+                    .OrderBy(t => t.Title)
+                    .ToList(),
                     Teams = characterFound.Teams.Select(tm => new TeamListItem
                     {
                         Id = tm.Id,
                         Name = tm.Team.Name
-                    }).ToList(),
+                    })
+                    .OrderBy(n => n.Name)
+                    .ToList(),
                 };
             }
-                return null;
+            return null;
         }
 
         public async Task<bool> UpdateCharacterAsync(int characterId, CharacterUpdate request)

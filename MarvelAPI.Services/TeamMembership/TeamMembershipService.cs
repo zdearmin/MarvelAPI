@@ -43,6 +43,9 @@ namespace MarvelAPI.Services.TeamMembership
         public async Task<TeamMembershipDetail> GetTeamMembershipByIdAsync(int teamMembershipId)
         {
             var teamMembership = await _dbContext.TeamMemberships
+            .Where(
+                x => x.Id == teamMembershipId
+            )
             .Select(
                 x => new TeamMembershipDetail
                 {
@@ -52,9 +55,6 @@ namespace MarvelAPI.Services.TeamMembership
                     Member = x.Member.FullName,
                     MemberId = x.MemberId
                 }
-            )
-            .Where(
-                x => x.Id == teamMembershipId
             )
             .FirstOrDefaultAsync();
             return teamMembership;

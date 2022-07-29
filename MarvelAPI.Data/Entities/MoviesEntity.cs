@@ -5,7 +5,7 @@ namespace MarvelAPI.Data.Entities
     public class MoviesEntity
     {
         public MoviesEntity() {
-            Appearances = new List<MovieAppearanceEntity>();
+            Characters = new List<MovieAppearanceEntity>();
         }
 
         [Key]
@@ -15,6 +15,6 @@ namespace MarvelAPI.Data.Entities
 
         public int? ReleaseYear { get; set; }
 
-        public virtual IEnumerable<MovieAppearanceEntity> Appearances { get; set; }
+        public virtual IEnumerable<MovieAppearanceEntity> Characters { get; set; }
     }
 }
