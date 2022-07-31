@@ -31,7 +31,9 @@ namespace MarvelAPI.WebAPI.Controllers
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            
             var tokenResponse = await _tokenService.GetTokenAsync(request);
+            
             if (tokenResponse is null) {
                 return BadRequest("Invalid username or password.");
             }
@@ -78,7 +80,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return Ok(userDetail);
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPut("{userId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -93,7 +95,7 @@ namespace MarvelAPI.WebAPI.Controllers
                 BadRequest("Sorry, the user could not be updated.");
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpDelete("{userId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

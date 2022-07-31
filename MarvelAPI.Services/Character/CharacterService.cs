@@ -124,21 +124,21 @@ namespace MarvelAPI.Services.Character
                     Status = characterFound.Status,
                     Movies = characterFound.Movies.Select(m => new MovieListItem
                     {
-                        Id = m.Id,
+                        Id = m.MovieId,
                         Title = m.Movie.Title
                     })
                     .OrderBy(t => t.Title)
                     .ToList(),
                     TVShows = characterFound.TVShows.Select(tv => new TVShowListItem
                     {
-                        Id = tv.Id,
+                        Id = tv.TVShowId,
                         Title = tv.TVShow.Title
                     })
                     .OrderBy(t => t.Title)
                     .ToList(),
                     Teams = characterFound.Teams.Select(tm => new TeamListItem
                     {
-                        Id = tm.Id,
+                        Id = tm.TeamId,
                         Name = tm.Team.Name
                     })
                     .OrderBy(n => n.Name)

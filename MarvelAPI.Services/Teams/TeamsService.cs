@@ -64,7 +64,7 @@ namespace MarvelAPI.Services.Teams
                     Alignment = teamFound.Alignment,
                     Members = teamFound.Members.Select(m => new CharacterListItem
                     {
-                        Id = m.Id,
+                        Id = m.MemberId,
                         FullName = m.Member.FullName
                     })
                     .OrderBy(n => n.FullName)

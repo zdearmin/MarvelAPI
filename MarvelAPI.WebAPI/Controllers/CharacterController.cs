@@ -15,7 +15,7 @@ namespace MarvelAPI.WebAPI.Controllers
             _service = characterService;
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -81,7 +81,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return Ok(result);
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPut("{characterId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -96,7 +96,7 @@ namespace MarvelAPI.WebAPI.Controllers
             return BadRequest("Could not update character.");
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpDelete("{characterId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

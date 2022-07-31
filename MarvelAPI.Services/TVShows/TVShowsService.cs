@@ -66,7 +66,7 @@ namespace MarvelAPI.Services.TVShowsService
                     Seasons = (int)tvShowFound.Seasons,
                     Characters = tvShowFound.Characters.Select(c => new CharacterListItem
                     {
-                        Id = c.Id,
+                        Id = c.CharacterId,
                         FullName = c.Character.FullName
                     })
                     .OrderBy(n => n.FullName)
