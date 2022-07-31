@@ -54,11 +54,11 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
         [HttpGet("{tvShowTitle}")]
-        [ProducesResponseType(typeof(TVShowDetail), 200)]
+        [ProducesResponseType(typeof(IEnumerable<TVShowListItem>), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetTVShowByTitleAsync([FromRoute] string tvShowTitle)
+        public async Task<IActionResult> GetTVShowsByTitleAsync([FromRoute] string tvShowTitle)
         {
-            var tvShow = await _service.GetTVShowByTitleAsync(tvShowTitle);
+            var tvShow = await _service.GetTVShowsByTitleAsync(tvShowTitle);
             if (tvShow == default)
             {
                 return NotFound("Sorry, the TV show could not be found.");

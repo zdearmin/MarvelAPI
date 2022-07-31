@@ -89,7 +89,7 @@ namespace MarvelAPI.Services.MoviesService
                 {
                     Id = m.Id,
                     Title = m.Title
-                })
+            })
             .OrderBy(t => t.Title)
             .ToListAsync();
             return moviesFound;
@@ -138,9 +138,6 @@ namespace MarvelAPI.Services.MoviesService
         {
             var result = String.Concat(movie.Title.Split(' ', '-')).ToLower();
             return result;
-        }
-        private string CheckUpdateProperty(string from, string to) {
-            return String.IsNullOrEmpty(to.Trim()) ? from : to.Trim();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace MarvelAPI.Data.Entities
     public class TVShowsEntity
     {
         public TVShowsEntity() {
-            Appearances = new List<TVShowAppearanceEntity>();
+            Characters = new List<TVShowAppearanceEntity>();
         }
 
         [Key]
@@ -15,6 +15,6 @@ namespace MarvelAPI.Data.Entities
         public int? ReleaseYear { get; set; }
         public int? Seasons { get; set; }
 
-        public virtual IEnumerable<TVShowAppearanceEntity> Appearances { get; set; }
+        public virtual IEnumerable<TVShowAppearanceEntity> Characters { get; set; }
     }
 }

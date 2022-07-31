@@ -43,6 +43,9 @@ namespace MarvelAPI.Services.TVShowAppearance
         public async Task<TVShowAppearanceDetail> GetTVShowAppearanceByIdAsync(int tvShowAppearanceId)
         {
             var tvShowAppearance = await _dbContext.TVShowAppearance
+            .Where(
+                x => x.Id == tvShowAppearanceId
+            )
             .Select(
                 x => new TVShowAppearanceDetail
                 {
@@ -52,9 +55,6 @@ namespace MarvelAPI.Services.TVShowAppearance
                     TVShowId = x.TVShowId,
                     TVShow = x.TVShow.Title
                 }
-            )
-            .Where(
-                x => x.Id == tvShowAppearanceId
             )
             .FirstOrDefaultAsync();
             return tvShowAppearance;
@@ -68,6 +68,7 @@ namespace MarvelAPI.Services.TVShowAppearance
             {
                 return false;
             }
+
             tvShowAppearance.CharacterId = request.CharacterId;
             tvShowAppearance.TVShowId = request.TVShowId;
 
@@ -78,10 +79,12 @@ namespace MarvelAPI.Services.TVShowAppearance
         public async Task<bool> DeleteTVShowAppearanceAsync(int tvShowAppearanceId)
         {
             var tvShowAppearance = await _dbContext.TVShowAppearance.FindAsync(tvShowAppearanceId);
+
             if (tvShowAppearance is null) 
             {
                 return false;
             }
+            
             _dbContext.TVShowAppearance.Remove(tvShowAppearance);
             return await _dbContext.SaveChangesAsync() == 1;
         }

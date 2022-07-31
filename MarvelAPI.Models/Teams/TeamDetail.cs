@@ -12,6 +12,6 @@ namespace MarvelAPI.Models.Teams
 
         public string Alignment { get; set; }
 
-        public IEnumerable<CharacterListItem> Members { get; set; }
+        public List<CharacterListItem> Members { get; set; }
     }
 }

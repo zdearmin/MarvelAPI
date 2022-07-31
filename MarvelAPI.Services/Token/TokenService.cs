@@ -38,14 +38,17 @@ namespace MarvelAPI.Services.Token
             (
                 user => user.Username.ToLower() == model.Username.ToLower()
             );
+
             if (userEntity is null) {
                 return null;
             }
+
             var passwordHasher = new PasswordHasher<UserEntity>();
             var verifyPasswordResult = passwordHasher.VerifyHashedPassword
             (
                 userEntity, userEntity.Password, model.Password
             );
+
             if (verifyPasswordResult == PasswordVerificationResult.Failed) {
                 return null;
             }
@@ -58,10 +61,12 @@ namespace MarvelAPI.Services.Token
             (
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"])
             );
+
             var credentials = new SigningCredentials
             (
                 securityKey, SecurityAlgorithms.HmacSha256
             );
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = _config["Jwt:Issuer"],
@@ -71,6 +76,7 @@ namespace MarvelAPI.Services.Token
                 Expires = DateTime.UtcNow.AddDays(14),
                 SigningCredentials = credentials
             };
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenResponse = new TokenResponse
@@ -79,18 +85,22 @@ namespace MarvelAPI.Services.Token
                 IssuedAt = token.ValidFrom,
                 Expires = token.ValidTo
             };
+
             return tokenResponse;
         }
 
         private Claim[] GetClaims(UserEntity user) {
             var fullName = $"{user.FirstName} {user.LastName}";
+
             var name = !string.IsNullOrWhiteSpace(fullName) ? 
             fullName : user.Username;
+
             var claims = new Claim[]{
                 new Claim("Id", user.Id.ToString()),
                 new Claim("Username", user.Username),
                 new Claim("Name", name)
             };
+            
             return claims;
         }
     }

@@ -1,3 +1,4 @@
+using System.Linq;
 using MarvelAPI.Models.Users;
 using MarvelAPI.Data;
 using MarvelAPI.Data.Entities;

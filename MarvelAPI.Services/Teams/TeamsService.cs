@@ -41,48 +41,75 @@ namespace MarvelAPI.Services.Teams
                         Id = t.Id,
                         Name = t.Name
                     }
-                ).ToListAsync();
+                )
+                .OrderBy(n => n.Name)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<TeamDetail> GetTeamByIdAsync(int Id)
+        public async Task<TeamDetail> GetTeamByIdAsync(int teamId)
         {
-            var teamFound = await _dbContext.Teams.FindAsync(Id);
-            var teamMember = teamFound.Members.Select
-            (
-                m => new CharacterListItem
+            var teamFound = await _dbContext.Teams
+            .Include(x => x.Members)
+            .ThenInclude(y => y.Member)
+            .FirstOrDefaultAsync(t => t.Id == teamId);
+
+            if (teamFound != null)
+            {
+                return new TeamDetail
                 {
-                    Id = m.Id,
-                    FullName = m.Member.FullName
-                }
-            );
-            var result = new TeamDetail{
-                Id = teamFound.Id,
-                Name = teamFound.Name,
-                Authority = teamFound.Authority,
-                Alignment = teamFound.Alignment,
-                Members = teamMember.ToList()
-            };
-            return result;
+                    Id = teamFound.Id,
+                    Name = teamFound.Name,
+                    Authority = teamFound.Authority,
+                    Alignment = teamFound.Alignment,
+                    Members = teamFound.Members.Select(m => new CharacterListItem
+                    {
+                        Id = m.Id,
+                        FullName = m.Member.FullName
+                    })
+                    .OrderBy(n => n.FullName)
+                    .ToList()
+                };
+            }
+            return null;
+            // var teamMember = teamFound.Members.Select
+            // (
+            //     m => new CharacterListItem
+            //     {
+            //         Id = m.Id,
+            //         FullName = m.Member.FullName
+            //     }
+            // );
+            // var result = new TeamDetail{
+            //     Id = teamFound.Id,
+            //     Name = teamFound.Name,
+            //     Authority = teamFound.Authority,
+            //     Alignment = teamFound.Alignment,
+            //     Members = teamMember.ToList()
+            // };
+            // return result;
         }
 
         public async Task<bool> UpdateTeamAsync(int teamId, TeamUpdate request)
         {
             var teamFound = await _dbContext.Teams.FindAsync(teamId);
+
             if (teamFound is null)
             {
                 return false;
             }
+
             teamFound.Name = CheckUpdateProperty(teamFound.Name, request.Name);
             teamFound.Authority = CheckUpdateProperty(teamFound.Authority, request.Authority);
             teamFound.Alignment = CheckUpdateProperty(teamFound.Alignment, request.Alignment);
+            
             var numOfChanges = await _dbContext.SaveChangesAsync();
             return numOfChanges == 1;
         }
 
-        public async Task<bool> DeleteTeamAsync(int Id)
+        public async Task<bool> DeleteTeamAsync(int teamId)
         {
-            var team = await _dbContext.Teams.FindAsync(Id);
+            var team = await _dbContext.Teams.FindAsync(teamId);
             _dbContext.Teams.Remove(team);
             return await _dbContext.SaveChangesAsync() == 1;
         }

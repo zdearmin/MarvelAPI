@@ -32,7 +32,7 @@ namespace MarvelAPI.WebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(TeamListItem), 200)]
+        [ProducesResponseType(typeof(IEnumerable<TeamListItem>), 200)]
         public async Task<IActionResult> GetAllTeamsAsync() {
             return Ok(await _service.GetAllTeamsAsync());
         }

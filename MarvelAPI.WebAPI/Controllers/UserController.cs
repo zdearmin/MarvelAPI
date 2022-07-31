@@ -57,7 +57,7 @@ namespace MarvelAPI.WebAPI.Controllers
         }
         
         [HttpGet]
-        [ProducesResponseType(typeof(UserDetail), 200)]
+        [ProducesResponseType(typeof(IEnumerable<UserDetail>), 200)]
         public async Task<IActionResult> GetAllUsersAsync() 
         {
             return Ok(await _userService.GetAllUsersAsync());
